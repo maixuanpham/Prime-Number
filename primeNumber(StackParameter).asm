@@ -20,7 +20,7 @@ myArray		DWORD	2000 DUP(0), 0
 .code
 main PROC
 	L1:	
-		mov edx, OFFSET prompt1			; display all the instructions
+		mov edx, OFFSET prompt1					; display all the instructions
 		call WriteString
 		mov edx, OFFSET prompt2
 		call WriteString
@@ -30,16 +30,16 @@ main PROC
 		call WriteString
 		call crlf
 		
-		mov edx, OFFSET value			; get input n value 	
+		mov edx, OFFSET value					; get input n value 	
 		call WriteString
 		call ReadDec
 		cmp eax, 2						; if < 2, input again
 		jb Wrong							
-		cmp eax, 2000000				; if > 2mil, input again
+		cmp eax, 2000000					; if > 2mil, input again
 		ja Wrong
 		push eax						; else save n value
 
-		mov edx, OFFSET selection		; get option
+		mov edx, OFFSET selection				; get option
 		call WriteString
 		call ReadDec
 		cmp eax, 1						; if < 1, input again
@@ -55,9 +55,9 @@ main PROC
 	
 	OP1:
 		pop eax							; get n value from stack
-		call option1					; get largest prime numer
+		call option1						; get largest prime numer
 		call crlf
-		mov edx, OFFSET largest			; display the largest prime number
+		mov edx, OFFSET largest					; display the largest prime number
 		call WriteString
 		call WriteDec
 		call crlf
@@ -65,28 +65,28 @@ main PROC
 		jmp L1
 	OP2:
 		pop eax							; get n value from stack
-		call option2					; get smallest prime number
+		call option2						; get smallest prime number
 		call crlf
-		mov edx, OFFSET smallest		; display the smallest prime number
+		mov edx, OFFSET smallest				; display the smallest prime number
 		call WriteString
 		call WriteDec
 		call crlf
 		call crlf
 		jmp L1
 	OP3:	
-		push OFFSET myArray				; send in myArray address
-		push OFFSET count				; send in count address
-		call option3					; get list of prime numbers
+		push OFFSET myArray					; send in myArray address
+		push OFFSET count					; send in count address
+		call option3						; get list of prime numbers
 		call crlf
 
-		mov edx, OFFSET allPrime		; display list of prime numer
+		mov edx, OFFSET allPrime				; display list of prime numer
 		call WriteString
-		push OFFSET myArray				; send in myArray address
+		push OFFSET myArray					; send in myArray address
 		push count						; send in # of count 
-		call printArray					; print update myArray
+		call printArray						; print update myArray
 		call crlf
 
-		mov edx, OFFSET time			; print # of prime number
+		mov edx, OFFSET time					; print # of prime number
 		call WriteString
 		mov eax, count
 		call WriteDec
@@ -96,7 +96,7 @@ main PROC
 	OP4:								; quit program
 		jmp Done
 	Wrong:
-		mov edx, OFFSET again			; wrong input, do again
+		mov edx, OFFSET again					; wrong input, do again
 		call WriteString
 		call crlf
 		jmp L1
@@ -104,43 +104,46 @@ main PROC
 		exit
 main ENDP
 
+
 ; This procedure would find the largest prime number by decrement 
 ; the input n number (store in eax) until a prime number is reach.
 ; INPUT: eax = n
 ; RETURN: eax = largest prime number
 option1 PROC
-		mov ecx, eax					; ecx = n
+		mov ecx, eax						; ecx = n
 	L1:
 		push ecx						; save n
-		call isPrime					; eax: 1 = prime, 0 = not prime
+		call isPrime						; eax: 1 = prime, 0 = not prime
 		pop ecx							; remove n
 		cmp eax, 1						; found prime, stop
 		je done
 		dec ecx							; else, check next number
 		jne L1
 	done:
-		mov eax, ecx					; eax = prime
+		mov eax, ecx						; eax = prime
 		ret
 option1 ENDP
+
 
 ; This procedure would find the smallest prime number by increment 
 ; the input number (store in eax) until a prime number is reach.
 ; INPUT: eax = n
 ; RETURN: eax = smallest prime number
 option2 PROC
-		mov ecx, eax					; ecx = n	
+		mov ecx, eax						; ecx = n	
 	L1:
 		push ecx						; save n
-		call isPrime					; eax: 1 = prime, 0 = not prime
+		call isPrime						; eax: 1 = prime, 0 = not prime
 		pop ecx							; remove n
 		cmp eax, 1						; found prime, stop
 		je done
 		inc ecx							; else, check next number
 		jne L1
 	done:
-		mov eax, ecx					; eax = prime
+		mov eax, ecx						; eax = prime
 		ret	
 option2 ENDP
+
 
 ; This procedure would store a list of prime numbers from 2 to 
 ; input number into an array and update number of prime numbers to count
@@ -148,20 +151,20 @@ option2 ENDP
 option3 PROC
 		push ebp
 		mov ebp, esp
-		mov ecx, [ebp + 16]				; ecx = n
-		mov esi, [ebp + 12]				; esi = myArray address
-		mov ebx, [ebp + 8]				; ebx = count address
+		mov ecx, [ebp + 16]					; ecx = n
+		mov esi, [ebp + 12]					; esi = myArray address
+		mov ebx, [ebp + 8]					; ebx = count address
 	L1:
 		cmp ecx, 1						; n value = 1, stop
 		je weDone
 		push ecx						; save n
-		call isPrime					; eax: 1 = prime, 0 = not prime
+		call isPrime						; eax: 1 = prime, 0 = not prime
 		pop ecx							; remove n
 		cmp eax, 1						; found prime, add to array
 		je done
 		jne next						; else, check next number
 	done:
-		mov [esi], ecx					; add to array
+		mov [esi], ecx						; add to array
 		add esi, 4
 		inc DWORD PTR [ebx]
 	next:
@@ -171,6 +174,7 @@ option3 PROC
 		ret 12							; return and clear stack
 option3 ENDP
 
+
 ; This procedure would take in 1 number (from stack parameter) 
 ; and check if that number is a prime number or not.
 ; INPUT: stack parameter (n)
@@ -178,10 +182,10 @@ option3 ENDP
 isPrime PROC
 		push ebp
 		mov ebp, esp
-		mov ecx, [ebp + 8]				; ecx = input number
+		mov ecx, [ebp + 8]					; ecx = input number
 		dec ecx					
 	L1:
-		mov eax, [ebp + 8]				; eax = input number
+		mov eax, [ebp + 8]					; eax = input number
 		mov edx, 0						; clear edx 
 		div ecx							; edx::eax = eax/ecx 
 		cmp ecx, 1						; ecx = 1 = stop loop
@@ -197,27 +201,28 @@ isPrime PROC
 		mov eax, 1						; eax = 1
 	over:
 		pop ebp							; restore ebp
-		ret								; return but keep last stack for reuse
+		ret							; return but keep last stack for reuse
 isPrime ENDP
+
 
 ; This procedure would print the array backward
 ; INPUT: stack parameter (count, &myArray)
 printArray	PROC
 		push ebp
 		mov ebp, esp
-		mov ecx, [ebp + 8]				; get count
-		mov esi, [ebp + 12]				; get myArray address
-		mov eax, ecx					; compute to go to last number
+		mov ecx, [ebp + 8]					; get count
+		mov esi, [ebp + 12]					; get myArray address
+		mov eax, ecx						; compute to go to last number
 		mov ebx, 4
 		mul ebx
-		add esi, eax					; go to last number of the address
+		add esi, eax						; go to last number of the address
 	L3:
 		sub esi, 4
-		mov eax, [esi]					; display number 
+		mov eax, [esi]						; display number 
 		call WriteDec
-		mov eax, ','					; display ','
+		mov eax, ','						; display ','
 		call WriteChar
-		mov eax, ' '					; display ' '
+		mov eax, ' '						; display ' '
 		call WriteChar
 		loop L3
 		pop ebp
